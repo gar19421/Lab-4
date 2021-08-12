@@ -50,11 +50,11 @@
 #define v 118
 
 //------------------------------VARIABLES---------------------------------------
-uint16_t VALOR_ADC = 0;
+uint16_t valor_ADC = 0;
 uint8_t POS1;
 uint8_t POS2;
 uint8_t POS3;
-uint8_t CONTADOR;
+uint8_t contador;
 uint16_t TEMP;
 
 //-----------------------------PROTOTIPOS---------------------------------------
@@ -77,13 +77,13 @@ void main (void){
         
         I2C_Master_Start();         //INICIALIZAMOS LA COMUNICACION
         I2C_Master_Write(0x71);     //ESCRIBIMOS A LA DIRECCION PARA LEER ESCLAVO1
-        VALOR_ADC = I2C_Master_Read(0); //AGREGAMOS EL VALOR AL PORTD
+        valor_ADC = I2C_Master_Read(0); //AGREGAMOS EL VALOR AL PORTD
         I2C_Master_Stop();          //DETENEMOS LA COMUNICACION
         __delay_ms(200);
         
         I2C_Master_Start();         //INICIALIZAMOS LA COMUNICACION
         I2C_Master_Write(0x81);     //ESCRIBIMOS A LA DIRECCION PARA LEER ESCLAVO2
-        CONTADOR = I2C_Master_Read(0); //AGREGAMOS EL VALOR AL CONTADOR
+        contador = I2C_Master_Read(0); //AGREGAMOS EL VALOR AL CONTADOR
         I2C_Master_Stop();          //DETENEMOS LA COMUNICACION
         __delay_ms(200);
         
@@ -105,8 +105,8 @@ void main (void){
         I2C_Master_Stop();          //DETENEMOS LA COMUNICACION
         __delay_ms(200);
         
-        VALOR_ADC= VALOR_ADC*1.961; //MAPEO PARA 5.00V
-        VAL(VALOR_ADC);             //EXTRAER LOS VALORES DEL ADC
+        valor_ADC= valor_ADC*1.961; //MAPEO PARA 5.00V
+        VAL(valor_ADC);             //EXTRAER LOS VALORES DEL ADC
         Lcd_Set_Cursor(2,1);        //COLOCAMOS VALORES DEL ADC EN LA LCD
         Lcd_Write_Char(POS1);
         Lcd_Write_Char(PUNTO);
@@ -114,7 +114,7 @@ void main (void){
         Lcd_Write_Char(POS3);
         Lcd_Write_String("v  ");
         
-        VAL(CONTADOR);             //EXTRAER LOS VALORES CONTADOR
+        VAL(valor_ADC);             //EXTRAER LOS VALORES CONTADOR
         Lcd_Write_Char(POS1);
         Lcd_Write_Char(POS2);
         Lcd_Write_Char(POS3);

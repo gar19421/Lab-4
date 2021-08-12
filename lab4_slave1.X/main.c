@@ -48,17 +48,17 @@
 #define CANAL0 0
 
 //------------------------------VARIABLES---------------------------------------
-uint8_t VALOR_ADC = 0;
-uint8_t z;
+uint8_t valor_ADC = 0;
+uint8_t var;
 //-----------------------------PROTOTIPOS---------------------------------------
 void setup (void);
 
 //---------------------------INTERRUPCION--------------------------------------
 void __interrupt()isr(void){
-    di();                   //PUSH
+         
      if (ADIF == 1){                    //INTERRUPCION DEL ADC
          
-        VALOR_ADC = ADC_READ();
+        valor_ADC = ADC_READ();
         
         PIR1bits.ADIF = 0;              //LIMPIAMOS LA BANDERA DEL ADC
     }
@@ -67,7 +67,7 @@ void __interrupt()isr(void){
         SSPCONbits.CKP = 0;
        
         if ((SSPCONbits.SSPOV) || (SSPCONbits.WCOL)){
-            z = SSPBUF;                 // LEEMOS EL VALOR DEL BUFFER Y AGREGAMOS A UNA VARIABLE
+            var = SSPBUF;                 // LEEMOS EL VALOR DEL BUFFER Y AGREGAMOS A UNA VARIABLE
             SSPCONbits.SSPOV = 0;       // LIMPIAMOS LA BANDERA DE OVERFLOW
             SSPCONbits.WCOL = 0;        // LIMPIAMOS EL BIT DE COLISION
             SSPCONbits.CKP = 1;         // HABILITAMOS SCL
@@ -75,7 +75,7 @@ void __interrupt()isr(void){
 
         if(!SSPSTATbits.D_nA && !SSPSTATbits.R_nW) {
             //__delay_us(7);
-            z = SSPBUF;                 // LEEMOS EL VALOR DEL BUFFER Y AGREGAMOS A UNA VARIABLE
+            var = SSPBUF;                 // LEEMOS EL VALOR DEL BUFFER Y AGREGAMOS A UNA VARIABLE
             //__delay_us(2);
             PIR1bits.SSPIF = 0;         // LIMPIAMOS BANDERA DE INTERUPCION RECEPCION/TRANSMISION SSP
             SSPCONbits.CKP = 1;         // HABILITA LOS PULSOS DEL RELOJ SCL
@@ -84,9 +84,9 @@ void __interrupt()isr(void){
             __delay_us(250);
             
         }else if(!SSPSTATbits.D_nA && SSPSTATbits.R_nW){
-            z = SSPBUF;
+            var = SSPBUF;
             BF = 0;
-            SSPBUF = VALOR_ADC;
+            SSPBUF = valor_ADC;
             SSPCONbits.CKP = 1;
             __delay_us(250);
             while(SSPSTATbits.BF);
@@ -95,15 +95,15 @@ void __interrupt()isr(void){
         PIR1bits.SSPIF = 0;    
     }
     
-    ei();                           //POP
+                        
 }
 
 void main (void){
     setup(); 
     ADCON0bits.GO = 1;
     while(1){
-        PORTB = VALOR_ADC;
-        ADC_CHANNELS(CANAL0,VALOR_ADC,&VALOR_ADC);  //POT0
+        PORTB = valor_ADC;
+        ADC_CHANNELS(CANAL0,valor_ADC,&valor_ADC);  //POT0
         __delay_ms(10);
     }
 }

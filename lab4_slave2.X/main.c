@@ -45,8 +45,8 @@
 #define _XTAL_FREQ 8000000
 
 //------------------------------VARIABLES---------------------------------------
-uint8_t z;
-uint8_t CONTADOR = 0;
+uint8_t var;
+uint8_t contador = 0;
 uint8_t flag1 = 0;
 uint8_t flag2 = 0;
 //-----------------------------PROTOTIPOS---------------------------------------
@@ -57,9 +57,9 @@ void __interrupt()isr(void){
     di();                   //PUSH
     if (RBIF == 1){
             if (RB0 == 0){              //REVISAMOS QUE RB0 FUE PRESIONADO
-                CONTADOR ++;
+                contador ++;
             }else if (RB1 == 0){              //REVISAMOS QUE RB1 FUE PRESIONADO
-                CONTADOR --;
+                contador --;
             }
         
      INTCONbits.RBIF = 0;           //LIMPIAMOS LA BANDERA DEL TMR0
@@ -69,7 +69,7 @@ void __interrupt()isr(void){
         SSPCONbits.CKP = 0;
        
         if ((SSPCONbits.SSPOV) || (SSPCONbits.WCOL)){
-            z = SSPBUF;                 // LEEMOS EL VALOR DEL BUFFER Y AGREGAMOS A UNA VARIABLE
+            var = SSPBUF;                 // LEEMOS EL VALOR DEL BUFFER Y AGREGAMOS A UNA VARIABLE
             SSPCONbits.SSPOV = 0;       // LIMPIAMOS LA BANDERA DE OVERFLOW
             SSPCONbits.WCOL = 0;        // LIMPIAMOS EL BIT DE COLISION
             SSPCONbits.CKP = 1;         // HABILITAMOS SCL
@@ -77,7 +77,7 @@ void __interrupt()isr(void){
 
         if(!SSPSTATbits.D_nA && !SSPSTATbits.R_nW) {
             //__delay_us(7);
-            z = SSPBUF;                 // LEEMOS EL VALOR DEL BUFFER Y AGREGAMOS A UNA VARIABLE
+            var = SSPBUF;                 // LEEMOS EL VALOR DEL BUFFER Y AGREGAMOS A UNA VARIABLE
             //__delay_us(2);
             PIR1bits.SSPIF = 0;         // LIMPIAMOS BANDERA DE INTERUPCION RECEPCION/TRANSMISION SSP
             SSPCONbits.CKP = 1;         // HABILITA LOS PULSOS DEL RELOJ SCL
@@ -86,9 +86,9 @@ void __interrupt()isr(void){
             __delay_us(250);
             
         }else if(!SSPSTATbits.D_nA && SSPSTATbits.R_nW){
-            z = SSPBUF;
+            var = SSPBUF;
             BF = 0;
-            SSPBUF = CONTADOR;
+            SSPBUF = contador;
             SSPCONbits.CKP = 1;
             __delay_us(250);
             while(SSPSTATbits.BF);
